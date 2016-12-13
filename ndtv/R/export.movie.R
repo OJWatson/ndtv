@@ -10,16 +10,20 @@
 #functions to generate and export movies
 #apply a series of network layouts to a networkDynamic object
 #store the coordinates as temporal attributes on the network
-compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai", seed.coords=NULL, layout.par=list(),default.dist=NULL, weight.attr=NULL,weight.dist=FALSE, chain.direction=c('forward','reverse'), verbose=TRUE,...){
+compute.animation <- function(net, slice.par=NULL, animation.mode="kamadakawai",force.layout=NULL, seed.coords=NULL, layout.par=list(),default.dist=NULL, weight.attr=NULL,weight.dist=FALSE, chain.direction=c('forward','reverse'), verbose=TRUE,...){
   #check that we are dealing with the right types of objects
   if (!is.networkDynamic(net)){
     stop("The 'net' argument to compute.animation must be a networkDynamic object")
   }
    
   #figure out what layouts we will be using
+  if(!is.null(force.layout)){
+    layout.fun <- force.layout
+  } else {
   layout.fun <- try(match.fun(paste("network.layout.animate.", animation.mode, sep = "")), silent = TRUE)
   if (class(layout.fun) == "try-error"){
       stop(paste("Error in compute.animation: no network animation layout function for animation.mode ", animation.mode))
+  }
   }
   
   # figure out what recentering we will be using
